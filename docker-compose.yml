@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: onlyone_app
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=onlyone
+      - DB_PASS=onlyone-12345+
+      - DB_NAME=onlyone
+  db:
+    image: postgres:11
+    container_name: onlyone_db
+    environment:
+      POSTGRES_DB: onlyone
+      POSTGRES_USER: onlyone
+      POSTGRES_PASSWORD: onlyone-12345+
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/onlyone_bak.sql:/docker-entrypoint-initdb.d/onlyone_bak.sql
+    restart: always
+
+volumes:
+  db_data:
